@@ -5,49 +5,56 @@
 #include <stdbool.h>
 
 /**
-* @brief Accio que demana pel teclat les coordenades a emplenar de la taula
-* @param errores (E) El máximo de errores permitido
-* @param filas (E) El número de filas de la tabla
-* @param cols (E) El número de columnas de la tabla
-* @param filas_usuari (E) El número de filas de la tabla
-* @param cols_usuari (E) El número de columnas de la tabla
+* @brief Accio que demana pel teclat les columnes del usuari a emplenar de la taula
+* @param errores (E) El mÃ¡ximo de errores permitido
+* @param intents (E) El mÃ¡ximo de intentos permitido
+* @param cols (S) El nÃºmero de columnas de la tabla
+* @param cols_usuari (S) El nÃºmero de la columna de l'usuario de la tabla
 */
-void demana_coordenades (int intents, int cols, int filas, int filas_usuari, int cols_usuari, int errores) //struct por referencia
+void demana_columna (int intents, int cols, int filas, int filas_usuari, int cols_usuari, int errores) //struct por referencia
 {
-    errores=3;
-    intents=4;
-    cols, filas=5;
-    if(intents>errores)
+    do
     {
-        do
+        printf("Quina columna vols emplenar?");
+        printf("\n");
+        scanf("%d", &cols_usuari);
+        if (cols_usuari>cols)
         {
-            printf("Quina fila vols emplenar?");
-            scanf("%d", &filas_usuari);
-            printf("Quina columna vols emplenar?");
-            scanf("%d", &cols_usuari);
-            if (filas_usuari>filas)
-            {
-                printf("Tria un altre fila");
-            }
-            if(cols_usuari>cols)
-            {
-                printf("Tria un altre columna");
-            }
-        }while((filas_usuari>filas)&&(cols_usuari>cols));
-    }
-    else
-    {
-        printf("Intents esgotats");
-    }
+            printf("Tria un altre columna");
+            printf("\n");
+        }
+    }while(cols_usuari>cols);
 }
 /**
- * @brief Accio a fer si el número es passa de columna
+* @brief Accio que demana pel teclat les columnes del usuari a emplenar de la taula
+* @param errores (E) El mÃ¡ximo de errores permitido
+* @param intents (E) El mÃ¡ximo de intentos permitido
+* @param filas (S) El nÃºmero de filas de la tabla
+* @param filas_usuari (S) El nÃºmero de la fila de l'usuario de la tabla
+*/
+void demana_filas(int intents, int cols, int filas, int filas_usuari, int cols_usuari, int errores) //struct por referencia
+{
+    do
+    {
+        printf("Quina fila vols emplenar?");
+        printf("\n");
+        scanf("%d", &filas_usuari);
+        if (filas_usuari>filas)
+        {
+            printf("Tria un altre fila");
+            printf("\n");
+        }
+    }while(filas_usuari>filas);
+}    
+    
+/**
+ * @brief Accio a fer si el nÃºmero es passa de columna
 * @return bool que indica si la columna del usuario es igual al del tablero
  */
 bool columna_incorrecta(n_columnes);
 
 /**
- * @brief Accio a fer si el número es passa de fila
+ * @brief Accio a fer si el nÃºmero es passa de fila
  * @return bool que indica si la fila del usuario es igual al del tablero
  */
 bool fila_incorrecta(n_files);
@@ -55,6 +62,18 @@ bool fila_incorrecta(n_files);
 
 int main()
 {
-    int errores,  cols,  filas,  filas_usuari, cols_usuari,indice;
-    demana_coordenades(errores, cols, filas, filas_usuari, cols_usuari, indice);
+    int errores, cols, filas, filas_usuari, cols_usuari, intents;
+    cols=5;
+    filas=5;
+    errores=3;
+    intents=4;
+    if(intents>errores)
+    {
+        demana_columna(errores, cols, filas, filas_usuari, cols_usuari, intents);
+        demana_filas(errores, cols, filas, filas_usuari, cols_usuari, intents);
+    }
+     else
+    {
+        printf("Intents esgotats");
+    }
 }
