@@ -11,7 +11,7 @@
 * @param cols (S) El número de columnas de la tabla
 * @param cols_usuari (S) El número de la columna de l'usuario de la tabla
 */
-void demana_columna (int intents, int cols, int filas, int filas_usuari, int cols_usuari, int errores) //struct por referencia
+void demana_columna (int intents, int cols, int cols_usuari, int errores) //struct por referencia
 {
     do
     {
@@ -32,7 +32,7 @@ void demana_columna (int intents, int cols, int filas, int filas_usuari, int col
 * @param filas (S) El número de filas de la tabla
 * @param filas_usuari (S) El número de la fila de l'usuario de la tabla
 */
-void demana_filas(int intents, int cols, int filas, int filas_usuari, int cols_usuari, int errores) //struct por referencia
+void demana_filas(int intents, int filas, int filas_usuari, int errores) //struct por referencia
 {
     do
     {
@@ -69,8 +69,8 @@ int main()
     intents=4;
     if(intents>errores)
     {
-        demana_columna(errores, cols, filas, filas_usuari, cols_usuari, intents);
-        demana_filas(errores, cols, filas, filas_usuari, cols_usuari, intents);
+        demana_columna(errores, cols, cols_usuari, intents);
+        demana_filas(errores, filas, filas_usuari, intents);
     }
      else
     {
