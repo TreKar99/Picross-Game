@@ -1,27 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "funcions.h"
-#define MAX 100
-#define ROJO_F     "\x1b[41m"
-
-
-
 
 int main()
 {
+    system("color A"); //Poner letras de color verde
     game_t picross;
     dibuja_picross();
 
     if(obrir_dades(&picross))
     {
+        numeros_tablas(&picross); //Calcular los numeros de las tablas
         do
         {
-            cifrar_tabla(&picross);
+            imprimir_tabla(picross);
+            system("pause");
+            system("cls"); //Limpiar pantalla
             pedir_entrada(&picross);
-        } while(picross.error_play<picross.errores);
-        //numeros_tablas(&picross);
-    }
 
+        } while((picross.error_play<picross.errores) && !victoria(picross));
+
+        if(victoria(picross))
+        {
+            printf("GANADORRRRRRRR\n");
+        }
+        else
+            printf("GAME OVER\n");
+    }
 
     return 0;
 }

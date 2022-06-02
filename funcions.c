@@ -6,16 +6,18 @@
 
 
 
-
 void dibuja_picross()
 {
-    printf("___  _ ____ ____  ____ ____ ____");
-    printf("\n");
-    printf("|__] | |    |__/  |  | [__  [__");
-    printf("\n");
-    printf("|    | |___ |  \\  |__| ___] ___]");
-    printf("\n");
-    printf("\n");
+
+    printf("\t8888888b.  d8b\n");
+    printf("\t888   Y88b Y8P\n");
+    printf("\t888    888         \n");
+    printf("\t888   d88P 888  .d8888b 888d888  .d88b.  .d8888b  .d8888b  \n");
+    printf("\t8888888Pb  888 d88Pb    888P    d88..88b 88K      88K      \n");
+    printf("\t888        888 888      888     888  888 8Y8888b. bY8888b. \n");
+    printf("\t888        888 Y88b.    888     Y88..88P      X88      X88 \n");
+    printf("\t888        888  .Y8888P 888      8Y88P8   88888P'  88888P' \n");
+    printf("\n\n\n");
 }
 
 bool obrir_dades(game_t *p)
@@ -28,6 +30,8 @@ bool obrir_dades(game_t *p)
     p->columnas = 0;
     p->errores = 0;
     p->error_play = 0;
+    p->num_victoria = 0;
+    p->aciertos = 0;
 
     printf("Introdueix el nom del fitxer: ");
     scanf("%s", nom_fitxer);
@@ -41,8 +45,8 @@ bool obrir_dades(game_t *p)
     else
     {
         abrir = true;
-        fscanf(fichero, "%d %d %d", &p->filas, &p->columnas, &p->errores);
-        printf("Filas: %d Columnas: %d Errores: %d\n", p->filas, p->columnas, p->errores); //Leemos las instrucciones (primera fila archivo)
+        fscanf(fichero, "%d%d%d", &p->filas, &p->columnas, &p->errores);
+        printf("Filas: %d Columnas: %d Errores: %d\n\n", p->filas, p->columnas, p->errores); //Leemos las instrucciones (primera fila archivo)
 
         /*while (fgets(p->dades[i], 100, fichero) != NULL)
             {
@@ -68,25 +72,68 @@ bool obrir_dades(game_t *p)
     {
         for(int j = 0; j < p->columnas; j++)
         {
-            //system("COLOR 4B");
             p->joc[i][j] = '*';
+            if(p->dades[i][j] == 1)
+            {
+                p->num_victoria++;
+            }
         }
     }
+
+    //contamos los numeros
 
     return abrir;
 }
 
-bool comprovar_num(game_t *p)
+bool comprovar_num_correcte(game_t *p)
 {
     bool trobat = false;
 
     if(p->dades[p->fila_play][p->colum_play] == 1)
     {
-        p->joc[p->fila_play][p->colum_play] = p->dades[p->fila_play][p->colum_play];
+        p->joc[p->fila_play][p->colum_play] = 'O';
+        p->aciertos++;
         trobat = true;
     }
 
     return trobat;
+}
+
+bool comprovar_num_incorrecte(game_t *p)
+{
+    bool trobat = false;
+
+    if(p->dades[p->fila_play][p->colum_play] == 0)
+    {
+        p->joc[p->fila_play][p->colum_play] = 'X';
+        trobat = true;
+    }
+
+    return trobat;
+}
+
+bool num_repetit(game_t *p)
+{
+    bool repe = false;
+
+    if(p->joc[p->fila_play][p->colum_play] == 'O')
+    {
+        repe = true;
+    }
+
+    return repe;
+}
+
+bool num_equivocat_repetit(game_t *p)
+{
+    bool repe = false;
+
+    if(p->joc[p->fila_play][p->colum_play] == 'X')
+    {
+        repe = true;
+    }
+
+    return repe;
 }
 
 void pedir_entrada(game_t *p)
@@ -95,6 +142,7 @@ void pedir_entrada(game_t *p)
     {
         printf("Quina fila vols emplenar?\n");
         scanf("%d", &p->fila_play);
+        printf("\n");
         if ((p->fila_play>p->filas) || (p->fila_play<1))
             printf("Numero de fila incorrecta\n");
     }while ((p->fila_play>p->filas) || (p->fila_play<1));
@@ -105,30 +153,43 @@ void pedir_entrada(game_t *p)
     {
         printf("Quina columna vols emplenar?\n");
         scanf("%d", &p->colum_play);
+        printf("\n");
         if ((p->colum_play>p->columnas) || (p->colum_play<1))
-            printf("Numero de columna incorrecta");
+            printf("Numero de columna incorrecta\n");
     }while ((p->colum_play>p->columnas) || (p->colum_play<1));
 
     p->colum_play--;
 
-    if(comprovar_num(p))
+
+    if(num_repetit(p))
     {
-        printf("Correcte!\n");
-        printf("Errors: %d\n", p->error_play);
+        printf("Casilla repetida\n");
+        printf("Selecciona otra\n\n");
     }
-    else
+    else if(comprovar_num_correcte(p))
     {
-        printf("Maricon!\n");
+        printf("Casilla CORRECTA!\n");
+        printf("Errors: %d\n\n", p->error_play);
+    }
+    else if(num_equivocat_repetit(p))
+    {
+        printf("Casilla elegida repetida\n");
+        printf("Selecciona otra\n\n");
+    }
+    else if(comprovar_num_incorrecte(p))
+    {
+        printf("Casilla INCORRECTA!\n");
         p->error_play++;
-        printf("Errors: %d\n", p->error_play);
+        printf("Errors: %d\n\n", p->error_play);
     }
 }
 
 void numeros_tablas(game_t *p)
 {
-    int ind = p->columnas--;
     bool cond_fila = false; //Booleano para ayudar a contar las casillas a rellenar
+    int ind = 0;
 
+    //Bucle para sacar los numeros a poner de las filas
     for(int i=0; i<p->filas; i++)
     {
         for(int j=0; j<p->columnas; j++)
@@ -140,39 +201,45 @@ void numeros_tablas(game_t *p)
             }
             else if((p->dades[i][j] == 0) && cond_fila)
             {
-                ind--;
+                ind++;
                 cond_fila = false;
             }
 
         }
-        ind = p->columnas--;
+        ind = 0;
     }
 
-    /*for(int i = 0; i < p->filas; i++)
+    //Bucle para contar el numero de las columnas del numero de filas a poner
+    ind = 0;
+    p->num_columns = 0;
+    for(int i = 0; i < p->filas; i++)
     {
         for(int j = 0; j < p->columnas; j++)
         {
-            if(p->nums_files[i][j] != 0)
+            if(p->nums_files[i][j]!=0)
             {
-            printf("%d", p->nums_files[i][j]);
-            printf("%c", 179);
+                ind++;
             }
-
-
-
         }
-        printf("\n");
-
+        if(ind>p->num_columns)
+        {
+            p->num_columns = ind;
+        }
+        ind = 0;
     }
-    printf("\n");*/
 
-    /*for(int i=0; i<p->columnas; i++)
+
+
+
+    //Bucle para sacar los numeros a poner de las columnas
+    ind = 0;
+    for(int i=0; i<p->columnas; i++)
     {
         for(int j=0; j<p->filas; j++)
         {
             if(p->dades[j][i] == 1)
             {
-                p->nums_colums[ind][i]++;
+                p->nums_columns[ind][i]++;
                 cond_fila = true;
             }
             else if((p->dades[j][i] == 0) && cond_fila)
@@ -183,51 +250,78 @@ void numeros_tablas(game_t *p)
 
         }
         ind = 0;
-    }*/
-    /*for(int i = 0; i < picross.filas; i++)
+    }
+
+    //Bucle para sacar los numeros de columnes de los numeros de las filas a poner
+    ind = 0;
+    p->num_files = 0;
+    for(int i = 0; i < p->filas; i++)
     {
-        for(int j = 0; j < picross.columnas; j++)
-        {
-            if(picross.nums_colums[i][j] != 0)
-            printf("%d\t", picross.nums_colums[i][j]);
-
-        }
-        printf("\n");
-
-    }*/
-}
-
-void cifrar_tabla(game_t *p)
-{
-    /*for(int i = 0; i < p->filas; i++)
-    {
-        printf("%c", 179);
         for(int j = 0; j < p->columnas; j++)
         {
-            //system("COLOR 4B");
-            printf(" %d ", p->dades[i][j]);
-            printf("%c", 179);
+            if(p->nums_columns[j][i]!=0)
+            {
+                ind++;
+            }
+        }
+        if(ind>p->num_files)
+        {
+            p->num_files = ind;
+        }
+        ind = 0;
+    }
+
+
+
+}
+
+bool victoria(game_t p)
+{
+    bool win = false;
+
+    if(p.aciertos == p.num_victoria)
+        win = true;
+
+    return win;
+}
+
+void imprimir_tabla(game_t p)
+{
+
+
+    printf("\n");
+    //Imprimir num de 1 en columnas
+    for(int i = 0; i < p.num_files; i++)
+    {
+        for(int j = 0; j < p.num_columns; j++)
+        {
+            printf("   ");
+        }
+        for(int j = 0; j < p.columnas; j++)
+        {
+            printf("\t %d", p.nums_columns[i][j]);
 
         }
-
-        //printf("%c", 179);
         printf("\n");
 
     }
-    printf("\n");*/
 
-    for(int i = 0; i < p->filas; i++)
+    printf("\n");
+    for(int i = 0; i < p.filas; i++)
     {
-        printf("%c", 179);
-        for(int j = 0; j < p->columnas; j++)
+        //Imprimir num de 1 en filas
+        for(int j = 0; j < p.num_columns; j++)
         {
-            printf("%c", p->joc[i][j]);
-            printf("%c", 179);
-
+            printf(" %d ", p.nums_files[i][j]);
         }
 
-        printf("\n");
+        for(int j = 0; j < p.columnas; j++)
+        {
 
+            printf("\t%c%c%c", 179, p.joc[i][j], 179);
+        }
+
+        printf("\n\n");
     }
     printf("\n");
 
